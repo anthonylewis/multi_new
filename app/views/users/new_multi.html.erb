@@ -1,0 +1,52 @@
+<% content_for(:head) do %>
+<script type="text/javascript">
+  var index = 1;
+
+  function add_row() {
+    $("#add_row").click(function() {
+        var new_row = 
+          '<tr>' +
+          '  <td><input id="user_' + index + '_first_name" name="user[' + index + '][first_name]" size="30" type="text" /></td>' +
+          '  <td><input id="user_' + index + '_last_name" name="user[' + index + '][last_name]" size="30" type="text" /></td>' +
+          '  <td><input id="user_' + index + '_email" name="user[' + index + '][email]" size="30" type="email" /></td>' +
+          '</tr>'
+        
+        $('#many_new > tbody:last').append(new_row);
+
+        index++;
+    });
+  }
+
+  $(document).ready(function() {
+    add_row();
+  });
+</script>
+<% end %>
+
+<h1>New users</h1>
+
+<%= form_for :user, :url => create_multi_users_path, :html => { :method => :post } do %>
+  <table id="many_new">
+    <tr>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>E-Mail</th>
+    </tr>
+    <% @users.each_with_index do |user, index| %>
+      <%= fields_for "user[#{index}]", user do |user_fields| %>
+      <tr>
+        <td><%= user_fields.text_field :first_name %></td>
+        <td><%= user_fields.text_field :last_name %></td>
+        <td><%= user_fields.email_field :email %></td>
+      </tr>
+      <% end %>
+    <% end %>
+  </table>
+
+  <div class="actions">
+    <%= submit_tag %>
+    <input id="add_row" type="button" value="Add Row" />
+  </div>
+<% end %>
+
+<%= link_to 'Back', users_path %>
